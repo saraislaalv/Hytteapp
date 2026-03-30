@@ -1,0 +1,117 @@
+.opening-hours {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.place-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.place-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.4rem;
+}
+
+.place-emoji {
+  font-size: 1.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.place-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.place-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+}
+
+.place-phone {
+  font-size: 0.78rem;
+  color: #4a7c59;
+  text-decoration: none;
+}
+
+.place-phone:hover {
+  text-decoration: underline;
+}
+
+.status-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 99px;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.status-badge.open {
+  background: #e6f4eb;
+  color: #2d6a40;
+}
+
+.status-badge.closed {
+  background: #fdecea;
+  color: #b52a1c;
+}
+
+.status-label {
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 0.75rem;
+  padding-left: calc(1.4rem + 0.75rem);
+}
+
+.hours-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 0.6rem;
+}
+
+.hours-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.83rem;
+  padding: 0.25rem 0;
+  color: #555;
+}
+
+.hours-row.today {
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.hours-row.holiday .day-hours {
+  color: #b06a00;
+}
+
+.holiday-marker {
+  font-size: 0.75rem;
+  color: #b06a00;
+}
+
+.day-hours {
+  font-variant-numeric: tabular-nums;
+}
+
+.place-note {
+  font-size: 0.75rem;
+  color: #aaa;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid #f0f0f0;
+}
