@@ -45,6 +45,38 @@ header h1 {
   text-transform: uppercase;
 }
 
+/* --- Tab nav --- */
+.tab-nav {
+  background: #2d5a3d;
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.5rem 1rem;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.tab-btn.active {
+  background: rgba(255, 255, 255, 0.18);
+  color: white;
+}
+
+/* --- Main grid --- */
 main {
   flex: 1;
   padding: 2rem;
@@ -73,6 +105,10 @@ main {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+.section.full-width {
+  grid-column: 1 / -1;
 }
 
 .section-title {
