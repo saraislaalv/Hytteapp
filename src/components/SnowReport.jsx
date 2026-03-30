@@ -32,7 +32,6 @@ const CAMERAS = [
       'https://aws-cdn.norwaylive.tv/snapshots/b7c558b2-dcf2-4d38-8280-ee5afa0533b4/kam4utsnitt1.jpg',
       'https://aws-cdn.norwaylive.tv/snapshots/b7c558b2-dcf2-4d38-8280-ee5afa0533b4/kam4utsnitt2.jpg',
       'https://aws-cdn.norwaylive.tv/snapshots/b7c558b2-dcf2-4d38-8280-ee5afa0533b4/kam4utsnitt3.jpg',
-      'https://aws-cdn.norwaylive.tv/snapshots/b7c558b2-dcf2-4d38-8280-ee5afa0533b4/kam4utsnitt4.jpg',
     ],
   },
 ]
