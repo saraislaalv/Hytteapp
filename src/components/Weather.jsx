@@ -1,37 +1,24 @@
 import { useState, useEffect } from 'react'
 import './Weather.css'
 
-const WMO_CODES = {
-  0: { label: 'Klarvær', icon: '☀️' },
-  1: { label: 'Mest klart', icon: '🌤️' },
-  2: { label: 'Delvis skyet', icon: '⛅' },
-  3: { label: 'Overskyet', icon: '☁️' },
-  45: { label: 'Tåke', icon: '🌫️' },
-  48: { label: 'Rimtåke', icon: '🌫️' },
-  51: { label: 'Yr', icon: '🌦️' },
-  53: { label: 'Yr', icon: '🌦️' },
-  55: { label: 'Yr', icon: '🌦️' },
-  61: { label: 'Lett regn', icon: '🌧️' },
-  63: { label: 'Regn', icon: '🌧️' },
-  65: { label: 'Kraftig regn', icon: '🌧️' },
-  71: { label: 'Lett snø', icon: '🌨️' },
-  73: { label: 'Snø', icon: '❄️' },
-  75: { label: 'Kraftig snø', icon: '❄️' },
-  77: { label: 'Snøkorn', icon: '🌨️' },
-  80: { label: 'Regnbyger', icon: '🌦️' },
-  81: { label: 'Regnbyger', icon: '🌦️' },
-  82: { label: 'Kraftige byger', icon: '⛈️' },
-  85: { label: 'Snøbyger', icon: '🌨️' },
-  86: { label: 'Kraftige snøbyger', icon: '❄️' },
-  95: { label: 'Tordenvær', icon: '⛈️' },
-  96: { label: 'Tordenvær med hagl', icon: '⛈️' },
-  99: { label: 'Tordenvær med hagl', icon: '⛈️' },
-}
-
 const DAYS_NO = ['Søn', 'Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør']
 
-function getWeatherInfo(code) {
-  return WMO_CODES[code] ?? { label: 'Ukjent', icon: '🌡️' }
+// Yr symbol-koder → emoji + norsk tekst
+function symbolInfo(code) {
+  if (!code) return { label: 'Ukjent', icon: '🌡️' }
+  if (code.includes('clearsky')) return { label: 'Klarvær', icon: '☀️' }
+  if (code.includes('fair')) return { label: 'Lettskyet', icon: '🌤️' }
+  if (code.includes('partlycloudy')) return { label: 'Delvis skyet', icon: '⛅' }
+  if (code.includes('cloudy')) return { label: 'Overskyet', icon: '☁️' }
+  if (code.includes('fog')) return { label: 'Tåke', icon: '🌫️' }
+  if (code.includes('heavysnow')) return { label: 'Kraftig snø', icon: '❄️' }
+  if (code.includes('snow')) return { label: 'Snø', icon: '🌨️' }
+  if (code.includes('sleet')) return { label: 'Sludd', icon: '🌨️' }
+  if (code.includes('thunder')) return { label: 'Tordenvær', icon: '⛈️' }
+  if (code.includes('heavyrain')) return { label: 'Kraftig regn', icon: '🌧️' }
+  if (code.includes('rain')) return { label: 'Regn', icon: '🌧️' }
+  if (code.includes('drizzle') || code.includes('lightrain')) return { label: 'Yr', icon: '🌦️' }
+  return { label: 'Skyet', icon: '☁️' }
 }
 
 function WindIcon({ degrees }) {
@@ -52,14 +39,10 @@ export default function Weather() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const url =
-      'https://api.open-meteo.com/v1/forecast' +
-      '?latitude=61.48&longitude=10.07' +
-      '&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,precipitation' +
-      '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max' +
-      '&wind_speed_unit=ms&timezone=Europe%2FOslo&forecast_days=7'
-
-    fetch(url)
+    fetch(
+      'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=61.4572&lon=10.0958',
+      { headers: { 'User-Agent': 'hytteappen/1.0 github.com/saraislaalvestad/hytteapp' } }
+    )
       .then((r) => r.json())
       .then((data) => {
         setWeather(data)
@@ -74,8 +57,30 @@ export default function Weather() {
   if (loading) return <div className="weather-card loading">Henter vær...</div>
   if (error) return <div className="weather-card error">{error}</div>
 
-  const { current, daily } = weather
-  const now = getWeatherInfo(current.weather_code)
+  const timeseries = weather.properties.timeseries
+  const current = timeseries[0].data
+  const temp = current.instant.details.air_temperature
+  const windSpeed = current.instant.details.wind_speed
+  const windDir = current.instant.details.wind_from_direction
+  const precip = current.next_1_hours?.details?.precipitation_amount ?? 0
+  const symbol = current.next_1_hours?.summary?.symbol_code ?? current.next_6_hours?.summary?.symbol_code
+  const nowInfo = symbolInfo(symbol)
+
+  // Bygg daglig prognose ved å gruppere timeseries per dato
+  const dailyMap = {}
+  for (const entry of timeseries) {
+    const date = entry.time.slice(0, 10)
+    const details = entry.data.instant.details
+    const sym = entry.data.next_6_hours?.summary?.symbol_code ?? entry.data.next_1_hours?.summary?.symbol_code
+    const precip6 = entry.data.next_6_hours?.details?.precipitation_amount ?? 0
+
+    if (!dailyMap[date]) dailyMap[date] = { temps: [], symbol: sym, precip: 0 }
+    dailyMap[date].temps.push(details.air_temperature)
+    dailyMap[date].precip += precip6
+    if (!dailyMap[date].symbol && sym) dailyMap[date].symbol = sym
+  }
+
+  const forecast = Object.entries(dailyMap).slice(0, 7)
 
   return (
     <div className="weather-card">
@@ -84,43 +89,42 @@ export default function Weather() {
       </div>
 
       <div className="weather-current">
-        <div className="weather-icon-big">{now.icon}</div>
-        <div className="weather-temp-big">{Math.round(current.temperature_2m)}°</div>
+        <div className="weather-icon-big">{nowInfo.icon}</div>
+        <div className="weather-temp-big">{Math.round(temp)}°</div>
         <div className="weather-desc">
-          <span>{now.label}</span>
-          <span className="feels-like">
-            Føles som {Math.round(current.apparent_temperature)}°
-          </span>
+          <span>{nowInfo.label}</span>
         </div>
       </div>
 
       <div className="weather-details">
         <div className="detail">
-          <span className="detail-label">Nedbør</span>
-          <span>{current.precipitation} mm</span>
+          <span className="detail-label">Nedbør (1t)</span>
+          <span>{precip.toFixed(1)} mm</span>
         </div>
         <div className="detail">
           <span className="detail-label">Vind</span>
           <span>
-            <WindIcon degrees={current.wind_direction_10m} />
-            {Math.round(current.wind_speed_10m)} m/s
+            <WindIcon degrees={windDir} />
+            {Math.round(windSpeed)} m/s
           </span>
         </div>
       </div>
 
       <div className="weather-forecast">
-        {daily.time.map((date, i) => {
-          const day = getWeatherInfo(daily.weather_code[i])
+        {forecast.map(([date, day], i) => {
           const d = new Date(date)
           const label = i === 0 ? 'I dag' : i === 1 ? 'I morgen' : DAYS_NO[d.getDay()]
+          const info = symbolInfo(day.symbol)
+          const max = Math.round(Math.max(...day.temps))
+          const min = Math.round(Math.min(...day.temps))
           return (
             <div key={date} className="forecast-day">
               <span className="forecast-label">{label}</span>
-              <span className="forecast-icon">{day.icon}</span>
-              <span className="forecast-precip">{daily.precipitation_sum[i].toFixed(0)} mm</span>
+              <span className="forecast-icon">{info.icon}</span>
+              <span className="forecast-precip">{day.precip.toFixed(0)} mm</span>
               <span className="forecast-temps">
-                <span className="temp-max">{Math.round(daily.temperature_2m_max[i])}°</span>
-                <span className="temp-min">{Math.round(daily.temperature_2m_min[i])}°</span>
+                <span className="temp-max">{max}°</span>
+                <span className="temp-min">{min}°</span>
               </span>
             </div>
           )
