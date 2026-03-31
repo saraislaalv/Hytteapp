@@ -37,7 +37,7 @@ const PLACES = [
     },
   },
   {
-    name: 'Hev Vestsiden Deli',
+    name: 'Kvitfjell Vest Deli',
     emoji: '🏪',
     hours: [
       { open: '10:00', close: '18:00' }, // søn
