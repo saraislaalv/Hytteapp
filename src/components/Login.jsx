@@ -15,8 +15,16 @@ function Login() {
     setLoading(true)
     try {
       await signInWithEmailAndPassword(auth, email, password)
-    } catch {
-      setError('Feil e-post eller passord')
+    } catch (err) {
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+        setError('Feil e-post eller passord')
+      } else if (err.code === 'auth/operation-not-allowed') {
+        setError('E-post/passord-innlogging er ikke aktivert i Firebase')
+      } else if (err.code === 'auth/too-many-requests') {
+        setError('For mange forsøk. Vent litt og prøv igjen.')
+      } else {
+        setError(`Feil: ${err.code}`)
+      }
     } finally {
       setLoading(false)
     }
