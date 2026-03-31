@@ -8,6 +8,7 @@ import SnowReport from './components/SnowReport'
 import ShoppingList from './components/ShoppingList'
 import Login from './components/Login'
 import AddUser from './components/AddUser'
+import DriveTime from './components/DriveTime'
 
 const TABS = [
   { id: 'hjem', label: 'Hjem' },
@@ -67,6 +68,10 @@ function App() {
             <section className="section">
               <h2 className="section-title">Åpningstider</h2>
               <OpeningHours />
+            </section>
+            <section className="section">
+              <h2 className="section-title">Kjøretid</h2>
+              <DriveTime />
             </section>
           </>
         )}

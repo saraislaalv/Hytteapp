@@ -1,0 +1,58 @@
+.drivetime {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.drivetime-map {
+  width: 100%;
+  height: 220px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #e8f0ea;
+}
+
+.drivetime-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.drivetime-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 1px 4px rgba(45, 90, 61, 0.08);
+}
+
+.drivetime-icon {
+  font-size: 1.1rem;
+}
+
+.drivetime-label {
+  flex: 1;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.drivetime-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2d5a3d;
+}
+
+.drivetime-note {
+  font-size: 0.78rem;
+  color: #999;
+  text-align: right;
+  margin: 0;
+}
+
+.drivetime-loading,
+.drivetime-error {
+  font-size: 0.9rem;
+  color: #888;
+}
